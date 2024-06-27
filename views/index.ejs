@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Habit Tracker</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <h1>Habit Tracker</h1>
+  <form action="/add" method="POST">
+    <input type="text" name="name" placeholder="New habit">
+    <button type="submit">Add Habit</button>
+  </form>
+  <ul>
+    <% habits.forEach(habit => { %>
+      <li>
+        <h2><%= habit.name %></h2>
+        <form action="/update" method="POST">
+          <input type="hidden" name="id" value="<%= habit._id %>">
+          <% for (let i = 0; i < 7; i++) { 
+            const date = new Date();
+            date.setDate(date.getDate() - i);
+            const record = habit.records.find(r => r.date.toISOString().split('T')[0] === date.toISOString().split('T')[0]);
+            const status = record ? record.status : 'None';
+          %>
+            <div>
+              <span><%= date.toDateString() %></span>
+              <select name="status" onchange="this.form.submit()">
+                <option value="None" <%= status === 'None' ? 'selected' : '' %>>None</option>
+                <option value="Done" <%= status === 'Done' ? 'selected' : '' %>>Done</option>
+                <option value="Not done" <%= status === 'Not done' ? 'selected' : '' %>>Not done</option>
+              </select>
+              <input type="hidden" name="date" value="<%= date.toISOString().split('T')[0] %>">
+            </div>
+          <% } %>
+        </form>
+      </li>
+    <% }) %>
+  </ul>
+</body>
+</html>
